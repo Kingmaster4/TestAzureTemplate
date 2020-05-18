@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_TestVirtualMac_name": {
+            "defaultValue": "TestVirtualMac",
+            "type": "String"
+        },
+        "disks_TestVirtualMac_OsDisk_1_dc0987a0f6d54b8b92a1c650e53bd2ad_externalid": {
+            "defaultValue": "/subscriptions/10555bd1-414a-496b-88d5-80c95ffcda40/resourceGroups/TESTRESOURCEGROUP/providers/Microsoft.Compute/disks/TestVirtualMac_OsDisk_1_dc0987a0f6d54b8b92a1c650e53bd2ad",
+            "type": "String"
+        },
+        "networkInterfaces_testvirtualmac527_externalid": {
+            "defaultValue": "/subscriptions/10555bd1-414a-496b-88d5-80c95ffcda40/resourceGroups/TestResourceGroup/providers/Microsoft.Network/networkInterfaces/testvirtualmac527",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('virtualMachines_TestVirtualMac_name')]",
+            "location": "northeurope",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1ms"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_TestVirtualMac_name'), '_OsDisk_1_dc0987a0f6d54b8b92a1c650e53bd2ad')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[parameters('disks_TestVirtualMac_OsDisk_1_dc0987a0f6d54b8b92a1c650e53bd2ad_externalid')]"
+                        },
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_TestVirtualMac_name')]",
+                    "adminUsername": "TestAdmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_testvirtualmac527_externalid')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://testresourcegroupdiag727.blob.core.windows.net/"
+                    }
+                }
+            }
+        }
+    ]
+}
